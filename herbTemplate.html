@@ -1,0 +1,316 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "name": "makeHerbariumLabelFromiNat.ipynb",
+      "provenance": [],
+      "collapsed_sections": [],
+      "toc_visible": true,
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "name": "python3",
+      "display_name": "Python 3"
+    }
+  },
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/AgentschapPlantentuinMeise/labelsFromiNaturalist/blob/main/herbTemplate.html\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "Np7H_gWfk2k2",
+        "outputId": "2a6a3c4d-f032-488d-fbfb-67380364df03"
+      },
+      "source": [
+        "pip install blabel"
+      ],
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "text": [
+            "Collecting blabel\n",
+            "  Downloading https://files.pythonhosted.org/packages/01/82/f2226a23d6179c179b86c496374d2f9584ce63d294a8c916f2995e12d5c1/blabel-0.1.4-py3-none-any.whl\n",
+            "Requirement already satisfied: pillow in /usr/local/lib/python3.6/dist-packages (from blabel) (7.0.0)\n",
+            "Requirement already satisfied: jinja2 in /usr/local/lib/python3.6/dist-packages (from blabel) (2.11.2)\n",
+            "Collecting weasyprint\n",
+            "\u001b[?25l  Downloading https://files.pythonhosted.org/packages/ef/5b/58e85042758718f7ea5f6b3927675dc3aa25138884f0eef988a4b6653a53/WeasyPrint-52.2-py3-none-any.whl (363kB)\n",
+            "\u001b[K     |████████████████████████████████| 368kB 5.6MB/s \n",
+            "\u001b[?25hCollecting python-barcode\n",
+            "\u001b[?25l  Downloading https://files.pythonhosted.org/packages/4e/aa/90966e1caf4d630b2bb420084c9eaa14a7d2ddc8e8a4311cd55ac90753a8/python_barcode-0.13.1-py3-none-any.whl (217kB)\n",
+            "\u001b[K     |████████████████████████████████| 225kB 19.9MB/s \n",
+            "\u001b[?25hCollecting pystrich\n",
+            "\u001b[?25l  Downloading https://files.pythonhosted.org/packages/a6/e1/76feba239737895214b5066177f6e01055083632b49312c271b1b2936f9e/pyStrich-0.8.tar.gz (981kB)\n",
+            "\u001b[K     |████████████████████████████████| 983kB 17.7MB/s \n",
+            "\u001b[?25hCollecting qrcode\n",
+            "  Downloading https://files.pythonhosted.org/packages/42/87/4a3a77e59ab7493d64da1f69bf1c2e899a4cf81e51b2baa855e8cc8115be/qrcode-6.1-py2.py3-none-any.whl\n",
+            "Requirement already satisfied: MarkupSafe>=0.23 in /usr/local/lib/python3.6/dist-packages (from jinja2->blabel) (1.1.1)\n",
+            "Requirement already satisfied: setuptools>=39.2.0 in /usr/local/lib/python3.6/dist-packages (from weasyprint->blabel) (51.0.0)\n",
+            "Collecting cairocffi>=0.9.0\n",
+            "\u001b[?25l  Downloading https://files.pythonhosted.org/packages/84/ca/0bffed5116d21251469df200448667e90acaa5131edea869b44a3fbc73d0/cairocffi-1.2.0.tar.gz (70kB)\n",
+            "\u001b[K     |████████████████████████████████| 71kB 4.0MB/s \n",
+            "\u001b[?25hCollecting tinycss2>=1.0.0\n",
+            "  Downloading https://files.pythonhosted.org/packages/65/f7/63bf697a7c7257d304269b49f1be3dfe429856889e93963d6f5790d77d82/tinycss2-1.1.0-py3-none-any.whl\n",
+            "Collecting cssselect2>=0.1\n",
+            "  Downloading https://files.pythonhosted.org/packages/99/da/c86ec74495c69518720652f8aa8ab642d8af61a2098eede9db8b03d3c8b4/cssselect2-0.4.1-py3-none-any.whl\n",
+            "Collecting Pyphen>=0.9.1\n",
+            "\u001b[?25l  Downloading https://files.pythonhosted.org/packages/7c/5a/5bc036e01389bc6a6667a932bac3e388de6e7fa5777a6ff50e652f60ec79/Pyphen-0.10.0-py3-none-any.whl (1.9MB)\n",
+            "\u001b[K     |████████████████████████████████| 1.9MB 35.2MB/s \n",
+            "\u001b[?25hRequirement already satisfied: html5lib>=0.999999999 in /usr/local/lib/python3.6/dist-packages (from weasyprint->blabel) (1.0.1)\n",
+            "Requirement already satisfied: cffi>=0.6 in /usr/local/lib/python3.6/dist-packages (from weasyprint->blabel) (1.14.4)\n",
+            "Collecting CairoSVG>=2.4.0\n",
+            "\u001b[?25l  Downloading https://files.pythonhosted.org/packages/ec/8a/1dd6751941e407a4c0ea82a72143d8cfee5d56338bc13c586b1223d8b3ab/CairoSVG-2.5.0-py3-none-any.whl (45kB)\n",
+            "\u001b[K     |████████████████████████████████| 51kB 6.8MB/s \n",
+            "\u001b[?25hRequirement already satisfied: six in /usr/local/lib/python3.6/dist-packages (from qrcode->blabel) (1.15.0)\n",
+            "Requirement already satisfied: webencodings>=0.4 in /usr/local/lib/python3.6/dist-packages (from tinycss2>=1.0.0->weasyprint->blabel) (0.5.1)\n",
+            "Requirement already satisfied: pycparser in /usr/local/lib/python3.6/dist-packages (from cffi>=0.6->weasyprint->blabel) (2.20)\n",
+            "Requirement already satisfied: defusedxml in /usr/local/lib/python3.6/dist-packages (from CairoSVG>=2.4.0->weasyprint->blabel) (0.6.0)\n",
+            "Building wheels for collected packages: pystrich, cairocffi\n",
+            "  Building wheel for pystrich (setup.py) ... \u001b[?25l\u001b[?25hdone\n",
+            "  Created wheel for pystrich: filename=pyStrich-0.8-cp36-none-any.whl size=1107398 sha256=4b14394d6ba3fdd429a7df6564075a57da44e5a5aee61dedf78d3c9f03f4c325\n",
+            "  Stored in directory: /root/.cache/pip/wheels/e7/be/0c/8fe0bd5d5163e625d2904f676b7fd6456f63f5907115a244a7\n",
+            "  Building wheel for cairocffi (setup.py) ... \u001b[?25l\u001b[?25hdone\n",
+            "  Created wheel for cairocffi: filename=cairocffi-1.2.0-cp36-none-any.whl size=89552 sha256=51f4cb673d28bfe6753300c7d1aeb6567eb26119c482ee032fddf9b5e17aad67\n",
+            "  Stored in directory: /root/.cache/pip/wheels/40/76/48/f1effadceea83b32e7d957dd0f92db4db8b537d7b72b4ef374\n",
+            "Successfully built pystrich cairocffi\n",
+            "Installing collected packages: cairocffi, tinycss2, cssselect2, Pyphen, CairoSVG, weasyprint, python-barcode, pystrich, qrcode, blabel\n",
+            "Successfully installed CairoSVG-2.5.0 Pyphen-0.10.0 blabel-0.1.4 cairocffi-1.2.0 cssselect2-0.4.1 pystrich-0.8 python-barcode-0.13.1 qrcode-6.1 tinycss2-1.1.0 weasyprint-52.2\n"
+          ],
+          "name": "stdout"
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "1qfH_YCBklfe"
+      },
+      "source": [
+        "import requests\r\n",
+        "#import re\r\n",
+        "#import matplotlib.pyplot as plt\r\n",
+        "#import numpy as np\r\n",
+        "import pandas as pd\r\n",
+        "#from urllib.parse import urlencode\r\n",
+        "#import json\r\n",
+        "from datetime import datetime\r\n",
+        "import time\r\n",
+        "from inspect import getmembers, isfunction\r\n",
+        "from blabel import LabelWriter\r\n",
+        "from dateutil import parser"
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "GeyH4lGSqFPU"
+      },
+      "source": [
+        "# Helpful site: https://api.inaturalist.org/v1/docs/#!/Observations/get_observations\r\n",
+        "# look for the taxon ids and place ids in the urls on the web site.\r\n",
+        "\r\n",
+        "q = {\r\n",
+        "    \"user_id\": \"qgroom\",\r\n",
+        "    \"year\": \"2018\",\r\n",
+        "    \"per_page\": 100,\r\n",
+        "     \"page\": 1,\r\n",
+        "     \"iconic_taxa\": \"Plantae\",\r\n",
+        "}\r\n",
+        "url = \"https://api.inaturalist.org/v1/observations?user_id=qgroom&year=2020&order=desc&order_by=created_at\"\r\n",
+        "\r\n",
+        "\r\n",
+        "#del bioblitzProjects\r\n",
+        "observations = pd.DataFrame()\r\n",
+        "\r\n",
+        "num_pages = 3"
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "2P8pxfz7pWsI",
+        "outputId": "92cfbb78-a5e5-432a-bb3e-097502dd3b37"
+      },
+      "source": [
+        "# get all the project from iNaturalist\r\n",
+        "\r\n",
+        "page = int(1)\r\n",
+        "while True:\r\n",
+        "    r = requests.get(url, params=q)\r\n",
+        "    observations = pd.concat([observations, pd.DataFrame(r.json()[\"results\"])], sort=False)\r\n",
+        "\r\n",
+        "    if page > num_pages:\r\n",
+        "      break\r\n",
+        "    if page == 1:\r\n",
+        "        num_pages = int(r.json()[\"total_results\"] / r.json()[\"per_page\"])+1\r\n",
+        "        print(r.json()[\"total_results\"])\r\n",
+        "        print(num_pages)\r\n",
+        "        print(\"Results:\", r.json()[\"total_results\"], \", \", num_pages, \" pages total\")\r\n",
+        "    print(\"Retrieving page \", url+\" page \" + str(page))\r\n",
+        "    page += 1\r\n",
+        "    q[\"page\"] = page\r\n",
+        "    time.sleep(1)"
+      ],
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "text": [
+            "1211\n",
+            "13\n",
+            "Results: 1211 ,  13  pages total\n",
+            "Retrieving page  https://api.inaturalist.org/v1/observations?user_id=qgroom&year=2020&order=desc&order_by=created_at page 1\n",
+            "Retrieving page  https://api.inaturalist.org/v1/observations?user_id=qgroom&year=2020&order=desc&order_by=created_at page 2\n",
+            "Retrieving page  https://api.inaturalist.org/v1/observations?user_id=qgroom&year=2020&order=desc&order_by=created_at page 3\n",
+            "Retrieving page  https://api.inaturalist.org/v1/observations?user_id=qgroom&year=2020&order=desc&order_by=created_at page 4\n",
+            "Retrieving page  https://api.inaturalist.org/v1/observations?user_id=qgroom&year=2020&order=desc&order_by=created_at page 5\n",
+            "Retrieving page  https://api.inaturalist.org/v1/observations?user_id=qgroom&year=2020&order=desc&order_by=created_at page 6\n",
+            "Retrieving page  https://api.inaturalist.org/v1/observations?user_id=qgroom&year=2020&order=desc&order_by=created_at page 7\n",
+            "Retrieving page  https://api.inaturalist.org/v1/observations?user_id=qgroom&year=2020&order=desc&order_by=created_at page 8\n",
+            "Retrieving page  https://api.inaturalist.org/v1/observations?user_id=qgroom&year=2020&order=desc&order_by=created_at page 9\n",
+            "Retrieving page  https://api.inaturalist.org/v1/observations?user_id=qgroom&year=2020&order=desc&order_by=created_at page 10\n",
+            "Retrieving page  https://api.inaturalist.org/v1/observations?user_id=qgroom&year=2020&order=desc&order_by=created_at page 11\n",
+            "Retrieving page  https://api.inaturalist.org/v1/observations?user_id=qgroom&year=2020&order=desc&order_by=created_at page 12\n",
+            "Retrieving page  https://api.inaturalist.org/v1/observations?user_id=qgroom&year=2020&order=desc&order_by=created_at page 13\n"
+          ],
+          "name": "stdout"
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "FcT7VEixp6tD",
+        "outputId": "7bae1aa6-9a97-4a72-bfd8-4b600e61443c"
+      },
+      "source": [
+        "tmpObservation = dict()\r\n",
+        "listOfObservations = []\r\n",
+        "\r\n",
+        "for index, value in observations.iterrows():\r\n",
+        "    #print(\"value \",value)\r\n",
+        "    if not (value['taxon'] is None):\r\n",
+        "        for key, taxon in value['taxon'].items():\r\n",
+        "            if key == 'name':\r\n",
+        "                tmpObservation['scientificName'] = taxon\r\n",
+        "    if not (value['user'] is None):\r\n",
+        "        for key, user in value['user'].items():\r\n",
+        "            #print(key,user)\r\n",
+        "            if key == 'name':\r\n",
+        "                tmpObservation['recordedBy'] = user\r\n",
+        "            if key == 'orcid':\r\n",
+        "                tmpObservation['recordedById'] = user\r\n",
+        "    if not (value['uri'] is None):\r\n",
+        "            tmpObservation['uri'] = value['uri']\r\n",
+        "    if not (value['place_guess'] is None):\r\n",
+        "            tmpObservation['locality'] = value['place_guess']\r\n",
+        "    if not (value['location'] is None):\r\n",
+        "            tmpObservation['decimalLongitude'] = value['location'].split(',')[1]\r\n",
+        "            tmpObservation['decimalLatitude'] = value['location'].split(',')[0]\r\n",
+        "    if not (value['time_observed_at'] is None):\r\n",
+        "            #from datetime import datetime, timedelta, date\r\n",
+        "            #eventDate = datetime.strptime(value['time_observed_at'], '%Y-%m-%dT%H:%M:%S%z')\r\n",
+        "            eventDate =  parser.parse(value['time_observed_at'])\r\n",
+        "            tmpObservation['eventDate'] = eventDate.strftime('%Y-%m-%d')\r\n",
+        "            tmpObservation['eventTime'] = eventDate.strftime('%H:%M:%S%z')\r\n",
+        "    if not (value['ofvs'] is None):\r\n",
+        "            for extra in value['ofvs']:\r\n",
+        "              if extra['name'] == 'Collection #':\r\n",
+        "                tmpObservation['recordNumber'] = extra['value']\r\n",
+        "                print('Collection number ',extra['value'])\r\n",
+        "    #print(tmpObservation)\r\n",
+        "    listOfObservations.append(tmpObservation.copy())"
+      ],
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "text": [
+            "Collection number  18091\n",
+            "Collection number  18032\n",
+            "Collection number  18052\n",
+            "Collection number  18058\n",
+            "Collection number  18039\n",
+            "Collection number  18017\n"
+          ],
+          "name": "stdout"
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "rNHVqdZLlFME",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 322
+        },
+        "outputId": "8bed9803-d367-4ab1-8404-e286fc605dd1"
+      },
+      "source": [
+        "label_writer = LabelWriter(\"/content/herbTemplate.html\",\r\n",
+        "                           default_stylesheets=(\"/content/style.css\",))"
+      ],
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "error",
+          "ename": "FileNotFoundError",
+          "evalue": "ignored",
+          "traceback": [
+            "\u001b[0;31m---------------------------------------------------------------------------\u001b[0m",
+            "\u001b[0;31mFileNotFoundError\u001b[0m                         Traceback (most recent call last)",
+            "\u001b[0;32m<ipython-input-6-b50570e0e074>\u001b[0m in \u001b[0;36m<module>\u001b[0;34m()\u001b[0m\n\u001b[1;32m      1\u001b[0m label_writer = LabelWriter(\"/content/herbTemplate.html\",\n\u001b[0;32m----> 2\u001b[0;31m                            default_stylesheets=(\"/content/style.css\",))\n\u001b[0m",
+            "\u001b[0;32m/usr/local/lib/python3.6/dist-packages/blabel/blabel.py\u001b[0m in \u001b[0;36m__init__\u001b[0;34m(self, item_template_path, item_template, default_stylesheets, default_base_url, items_per_page, **default_context)\u001b[0m\n\u001b[1;32m     91\u001b[0m                  items_per_page=1, **default_context):\n\u001b[1;32m     92\u001b[0m         \u001b[0;32mif\u001b[0m \u001b[0mitem_template_path\u001b[0m \u001b[0;32mis\u001b[0m \u001b[0;32mnot\u001b[0m \u001b[0;32mNone\u001b[0m\u001b[0;34m:\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0;32m---> 93\u001b[0;31m             \u001b[0;32mwith\u001b[0m \u001b[0mopen\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0mitem_template_path\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0;34m'r'\u001b[0m\u001b[0;34m)\u001b[0m \u001b[0;32mas\u001b[0m \u001b[0mf\u001b[0m\u001b[0;34m:\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0m\u001b[1;32m     94\u001b[0m                 \u001b[0mitem_template\u001b[0m \u001b[0;34m=\u001b[0m \u001b[0mf\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mread\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m     95\u001b[0m         \u001b[0;32mif\u001b[0m \u001b[0misinstance\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0mitem_template\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0mstr\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m:\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n",
+            "\u001b[0;31mFileNotFoundError\u001b[0m: [Errno 2] No such file or directory: '/content/herbTemplate.html'"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "_pk5Jl70qwav"
+      },
+      "source": [
+        "label_writer.write_labels(listOfObservations, target='/content/qrcode_and_label.pdf')"
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "jHVMbtETwwqd"
+      },
+      "source": [
+        ""
+      ],
+      "execution_count": null,
+      "outputs": []
+    }
+  ]
+}
